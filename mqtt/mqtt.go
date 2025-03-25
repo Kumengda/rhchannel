@@ -51,7 +51,10 @@ func NewMyMqttServer(host string, port int, timeout time.Duration, deviceID stri
 func (m *MyMqttServer) Start() {
 	go func() {
 		for {
+			fmt.Println("[+]start receive message")
 			msg := m.messageChan.receive()
+			fmt.Println("[+]receive message")
+			fmt.Println(msg)
 			jsonBytes, _ := json.Marshal(msg)
 			m.conn.Write(jsonBytes)
 			//token := m.client.Publish(MessageTopic, 0, false, jsonBytes)
