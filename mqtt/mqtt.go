@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
+	"net"
 	"time"
 )
 
@@ -16,9 +17,14 @@ type MyMqttServer struct {
 	topic         string
 	messageChan   *messageQueue
 	deviceID      string
+	conn          net.Conn
 }
 
 func NewMyMqttServer(host string, port int, timeout time.Duration, deviceID string) (*MyMqttServer, error) {
+	conn, err := net.Dial("tcp", fmt.Sprintf("%s:%d", host, port))
+	if err != nil {
+		return nil, err
+	}
 	broker := fmt.Sprintf("tcp://%s:%d", host, port)
 	opts := mqtt.NewClientOptions()
 	opts.SetAutoReconnect(true)
@@ -38,6 +44,7 @@ func NewMyMqttServer(host string, port int, timeout time.Duration, deviceID stri
 		deviceID:      deviceID,
 		topic:         MessageTopic,
 		client:        client,
+		conn:          conn,
 	}, nil
 }
 
@@ -46,8 +53,9 @@ func (m *MyMqttServer) Start() {
 		for {
 			msg := m.messageChan.receive()
 			jsonBytes, _ := json.Marshal(msg)
-			token := m.client.Publish(MessageTopic, 0, false, jsonBytes)
-			token.Wait()
+			m.conn.Write(jsonBytes)
+			//token := m.client.Publish(MessageTopic, 0, false, jsonBytes)
+			//token.Wait()
 			time.Sleep(1 * time.Second)
 		}
 	}()
