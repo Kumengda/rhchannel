@@ -25,26 +25,26 @@ func NewMyMqttServer(host string, port int, timeout time.Duration, deviceID stri
 	if err != nil {
 		return nil, err
 	}
-	broker := fmt.Sprintf("tcp://%s:%d", host, port)
-	opts := mqtt.NewClientOptions()
-	opts.SetAutoReconnect(true)
-	opts.AddBroker(broker)
-	opts.SetConnectTimeout(timeout)
-	opts.SetClientID(randomClientID())
-	client := mqtt.NewClient(opts)
-	if token := client.Connect(); token.Wait() && token.Error() != nil {
-		return nil, token.Error()
-	}
+	//broker := fmt.Sprintf("tcp://%s:%d", host, port)
+	//opts := mqtt.NewClientOptions()
+	//opts.SetAutoReconnect(true)
+	//opts.AddBroker(broker)
+	//opts.SetConnectTimeout(timeout)
+	//opts.SetClientID(randomClientID())
+	//client := mqtt.NewClient(opts)
+	//if token := client.Connect(); token.Wait() && token.Error() != nil {
+	//	return nil, token.Error()
+	//}
 	return &MyMqttServer{
-		host:          host,
-		port:          port,
-		timeout:       timeout,
-		clientOptions: opts,
-		messageChan:   newMessageQueue(1),
-		deviceID:      deviceID,
-		topic:         MessageTopic,
-		client:        client,
-		conn:          conn,
+		host:    host,
+		port:    port,
+		timeout: timeout,
+		//clientOptions: opts,
+		messageChan: newMessageQueue(1),
+		deviceID:    deviceID,
+		topic:       MessageTopic,
+		//client:        client,
+		conn: conn,
 	}, nil
 }
 
