@@ -56,6 +56,7 @@ func (m *MyMqttServer) Start() {
 			fmt.Println("[+]receive message")
 			fmt.Println(msg)
 			jsonBytes, _ := json.Marshal(msg)
+			jsonBytes = append(jsonBytes, '\n')
 			m.conn.Write(jsonBytes)
 			//token := m.client.Publish(MessageTopic, 0, false, jsonBytes)
 			//token.Wait()
