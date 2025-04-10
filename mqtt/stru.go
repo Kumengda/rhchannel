@@ -7,9 +7,10 @@ const (
 )
 
 type Tdata struct {
-	Type      string `json:"type"`
-	Msg       string `json:"msg"`
-	TimeStamp int64  `json:"timestamp"`
+	Type string `json:"type"`
+	Msg  string `json:"msg"`
+
+	TimeStamp int64 `json:"timestamp"`
 }
 
 type Paramm struct {
