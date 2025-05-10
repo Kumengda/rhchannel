@@ -3,7 +3,9 @@ package mqtt
 type MsgType string
 
 const (
-	TestType MsgType = "TEST"
+	TestType       MsgType = "TEST"
+	FlowWarning    MsgType = "FlowWarning"
+	ProcessWarning MsgType = "ProcessWarning"
 )
 
 type Tdata struct {
