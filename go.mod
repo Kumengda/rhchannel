@@ -10,6 +10,7 @@ require (
 )
 
 require (
+	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/B9O2/Multitasking v0.6.6 // indirect
 	github.com/B9O2/NStruct v0.0.5 // indirect
 	github.com/Kumengda/easyChromedp v0.1.9 // indirect
@@ -17,6 +18,7 @@ require (
 	github.com/chromedp/chromedp v0.9.5 // indirect
 	github.com/chromedp/sysutil v1.0.0 // indirect
 	github.com/corpix/uarand v0.2.0 // indirect
+	github.com/go-sql-driver/mysql v1.9.2 // indirect
 	github.com/gobwas/httphead v0.1.0 // indirect
 	github.com/gobwas/pool v0.2.1 // indirect
 	github.com/gobwas/ws v1.3.2 // indirect
