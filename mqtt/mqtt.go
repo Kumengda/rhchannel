@@ -29,7 +29,7 @@ func NewMyMqttServer(host string, port int, dbname, dbuser, dbpass string, timeo
 	var err error
 	var db *sql.DB
 	if isSql {
-		dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", dbuser, dbpass, host, port, dbname)
+		dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", dbuser, dbpass, host, port, dbname)
 		db, err = sql.Open("mysql", dsn)
 		if err != nil {
 			return nil, err
