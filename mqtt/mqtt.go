@@ -8,6 +8,7 @@ import (
 	_ "github.com/go-sql-driver/mysql" // 导入 MySQL 驱动
 	"github.com/tidwall/gjson"
 	"net"
+	"strconv"
 	"time"
 )
 
@@ -72,12 +73,8 @@ func (m *MyMqttServer) Start() {
 			msg := m.messageChan.receive().(ReportMessage)
 			fmt.Println("[+]receive message")
 			jsonBytes, _ := json.Marshal(msg.Param.Data.Msg)
-			fmt.Println(string(jsonBytes))
-			res := gjson.ParseBytes(jsonBytes)
-			fmt.Println(res.Get("time").String())
-			fmt.Println(res.Get("type").String())
-			fmt.Println(res.Get("sip").String())
-			fmt.Println(res.Get("tip").String())
+			unquoted, _ := strconv.Unquote(string(jsonBytes))
+			res := gjson.Parse(unquoted)
 			m.insert(res.Get("time").String(), res.Get("type").String(), res.Get("sip").String(), res.Get("tip").String(), msg.DeviceId)
 			//jsonBytes, _ := json.Marshal(msg)
 			//jsonBytes = append(jsonBytes, '\n')
