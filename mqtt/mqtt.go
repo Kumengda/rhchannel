@@ -69,12 +69,11 @@ func (m *MyMqttServer) Start() {
 	go func() {
 		for {
 			fmt.Println("[+]start receive message")
-			msg := m.messageChan.receive()
+			msg := m.messageChan.receive().(ReportMessage)
 			fmt.Println("[+]receive message")
-			fmt.Println(msg)
-			jsonBytes, _ := json.Marshal(msg)
+			jsonBytes, _ := json.Marshal(msg.Param.Data.Msg)
 			res := gjson.ParseBytes(jsonBytes)
-			m.insert(res.Get("time").String(), res.Get("type").String(), res.Get("sip").String(), res.Get("tip").String())
+			m.insert(res.Get("time").String(), res.Get("type").String(), res.Get("sip").String(), res.Get("tip").String(), msg.DeviceId)
 			//jsonBytes, _ := json.Marshal(msg)
 			//jsonBytes = append(jsonBytes, '\n')
 			//m.conn.Write(jsonBytes)
@@ -84,12 +83,12 @@ func (m *MyMqttServer) Start() {
 		}
 	}()
 }
-func (m *MyMqttServer) insert(time string, attackType string, sip string, tip string) {
+func (m *MyMqttServer) insert(time string, attackType string, sip string, tip string, agentid string) {
 	insertSQL := `
-		INSERT INTO flow_warning (time, type,sip, tip)
-		VALUES (?, ?, ?, ?)
+		INSERT INTO flow_warning (time, type,sip, tip,agentid)
+		VALUES (?, ?, ?, ?,?)
 	`
-	_, err := m.db.Exec(insertSQL, time, attackType, sip, tip)
+	_, err := m.db.Exec(insertSQL, time, attackType, sip, tip, agentid)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
