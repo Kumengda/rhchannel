@@ -73,7 +73,6 @@ func (m *MyMqttServer) Start() {
 			fmt.Println("[+]receive message")
 			jsonBytes, _ := json.Marshal(msg.Param.Data.Msg)
 			res := gjson.ParseBytes(jsonBytes)
-			fmt.Println(string(jsonBytes))
 			m.insert(res.Get("time").String(), res.Get("type").String(), res.Get("sip").String(), res.Get("tip").String(), msg.DeviceId)
 			//jsonBytes, _ := json.Marshal(msg)
 			//jsonBytes = append(jsonBytes, '\n')
@@ -85,6 +84,12 @@ func (m *MyMqttServer) Start() {
 	}()
 }
 func (m *MyMqttServer) insert(time string, attackType string, sip string, tip string, agentid string) {
+	fmt.Println(time)
+	fmt.Println(attackType)
+	fmt.Println(sip)
+	fmt.Println(tip)
+	fmt.Println(agentid)
+
 	insertSQL := `
 		INSERT INTO flow_warning (time, type,sip, tip,agentid)
 		VALUES (?, ?, ?, ?,?)
