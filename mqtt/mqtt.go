@@ -73,6 +73,7 @@ func (m *MyMqttServer) Start() {
 			fmt.Println("[+]receive message")
 			jsonBytes, _ := json.Marshal(msg.Param.Data.Msg)
 			res := gjson.ParseBytes(jsonBytes)
+			fmt.Println(string(jsonBytes))
 			m.insert(res.Get("time").String(), res.Get("type").String(), res.Get("sip").String(), res.Get("tip").String(), msg.DeviceId)
 			//jsonBytes, _ := json.Marshal(msg)
 			//jsonBytes = append(jsonBytes, '\n')
