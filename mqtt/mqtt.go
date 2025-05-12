@@ -85,12 +85,12 @@ func (m *MyMqttServer) Start() {
 		}
 	}()
 }
-func (m *MyMqttServer) insert(time string, attackType string, sip string, tip string, agentid string) {
+func (m *MyMqttServer) insert(time string, attackType string, sip string, tip string, agetid string) {
 	insertSQL := `
-		INSERT INTO flow_warning (time, type,sip, tip,agentid)
+		INSERT INTO flow_warning (time, type,sip, tip,agetid)
 		VALUES (?, ?, ?, ?,?)
 	`
-	_, err := m.db.Exec(insertSQL, time, attackType, sip, tip, agentid)
+	_, err := m.db.Exec(insertSQL, time, attackType, sip, tip, agetid)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
