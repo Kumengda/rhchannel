@@ -75,7 +75,17 @@ func (m *MyMqttServer) Start() {
 			jsonBytes, _ := json.Marshal(msg.Param.Data.Msg)
 			unquoted, _ := strconv.Unquote(string(jsonBytes))
 			res := gjson.Parse(unquoted)
-			m.insert(res.Get("time").String(), res.Get("type").String(), res.Get("sip").String(), res.Get("tip").String(), msg.DeviceId)
+			m.insert(res.Get("time").String(),
+				res.Get("type").String(),
+				res.Get("attacktype").String(),
+				res.Get("sip").String(),
+				res.Get("tip").String(),
+				res.Get("tport").String(),
+				res.Get("sport").String(),
+				res.Get("schme").String(),
+				res.Get("source").String(),
+				res.Get("link_type").String(),
+				msg.DeviceId)
 			//jsonBytes, _ := json.Marshal(msg)
 			//jsonBytes = append(jsonBytes, '\n')
 			//m.conn.Write(jsonBytes)
@@ -85,10 +95,10 @@ func (m *MyMqttServer) Start() {
 		}
 	}()
 }
-func (m *MyMqttServer) insert(time string, attackType string, sip string, tip string, agetid string) {
+func (m *MyMqttServer) insert(time string, ttype, attackType, sip, tip, tport, sport, schem, source, linktype, agetid string) {
 	insertSQL := `
-		INSERT INTO flow_warning (time, type,sip, tip,agetid)
-		VALUES (?, ?, ?, ?,?)
+		INSERT INTO flow_warning (time, type,attackType,sip, tip,tport,sport,agetid,schem,source,linktype)
+		VALUES (?, ?, ?, ?,?,?,?,?,?,?,?)
 	`
 	_, err := m.db.Exec(insertSQL, time, attackType, sip, tip, agetid)
 	if err != nil {
