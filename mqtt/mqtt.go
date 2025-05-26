@@ -75,6 +75,7 @@ func (m *MyMqttServer) Start() {
 			fmt.Println("[+]receive message")
 			jsonBytes, _ := json.Marshal(msg.Param.Data.Msg)
 			unquoted, _ := strconv.Unquote(string(jsonBytes))
+			fmt.Println(unquoted)
 			if strings.Contains(unquoted, "网络流量异常告警") {
 				res := gjson.Parse(unquoted)
 				m.insertFlowWarning(res.Get("time").String(),
