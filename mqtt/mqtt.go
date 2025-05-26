@@ -9,6 +9,7 @@ import (
 	"github.com/tidwall/gjson"
 	"net"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -74,18 +75,30 @@ func (m *MyMqttServer) Start() {
 			fmt.Println("[+]receive message")
 			jsonBytes, _ := json.Marshal(msg.Param.Data.Msg)
 			unquoted, _ := strconv.Unquote(string(jsonBytes))
-			res := gjson.Parse(unquoted)
-			m.insert(res.Get("time").String(),
-				res.Get("type").String(),
-				res.Get("attacktype").String(),
-				res.Get("sip").String(),
-				res.Get("tip").String(),
-				res.Get("tport").String(),
-				res.Get("sport").String(),
-				res.Get("schme").String(),
-				res.Get("source").String(),
-				res.Get("link_type").String(),
-				msg.DeviceId)
+			if strings.Contains(unquoted, "网络流量异常告警") {
+				res := gjson.Parse(unquoted)
+				m.insertFlowWarning(res.Get("time").String(),
+					res.Get("type").String(),
+					res.Get("attacktype").String(),
+					res.Get("sip").String(),
+					res.Get("tip").String(),
+					res.Get("tport").String(),
+					res.Get("sport").String(),
+					res.Get("schme").String(),
+					res.Get("source").String(),
+					res.Get("link_type").String(),
+					msg.DeviceId)
+			} else {
+				res := gjson.Parse(unquoted)
+				m.insertProcessWarning(res.Get("time").String(),
+					res.Get("type").String(),
+					res.Get("detail").String(),
+					res.Get("path").String(),
+					res.Get("hash").String(),
+					msg.DeviceId,
+				)
+			}
+
 			//jsonBytes, _ := json.Marshal(msg)
 			//jsonBytes = append(jsonBytes, '\n')
 			//m.conn.Write(jsonBytes)
@@ -95,7 +108,7 @@ func (m *MyMqttServer) Start() {
 		}
 	}()
 }
-func (m *MyMqttServer) insert(time string, ttype, attackType, sip, tip, tport, sport, schem, source, linktype, agetid string) {
+func (m *MyMqttServer) insertFlowWarning(time string, ttype, attackType, sip, tip, tport, sport, schem, source, linktype, agetid string) {
 	insertSQL := `
 		INSERT INTO flow_warning (time, type,attackType,sip, tip,tport,sport,agetid,schem,source,linktype)
 		VALUES (?, ?, ?, ?,?,?,?,?,?,?,?)
@@ -106,6 +119,18 @@ func (m *MyMqttServer) insert(time string, ttype, attackType, sip, tip, tport, s
 		return
 	}
 }
+func (m *MyMqttServer) insertProcessWarning(time string, ttype, detail, path, hash, agetid string) {
+	insertSQL := `
+		INSERT INTO terminal_warning (time, type,detail,path, hash,agentid)
+		VALUES (?,?,?,?,?,?)
+	`
+	_, err := m.db.Exec(insertSQL, time, ttype, detail, path, hash, agetid)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+}
+
 func (m *MyMqttServer) Push(mtype MsgType, mdata Tdata) {
 	m.messageChan.send(ReportMessage{
 		Mid:       generateRandom10DigitNumber(),
