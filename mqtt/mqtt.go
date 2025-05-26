@@ -116,7 +116,7 @@ func (m *MyMqttServer) insertFlowWarning(time string, ttype, attackType, sip, ti
 		INSERT INTO flow_warning (time, type,attackType,sip, tip,tport,sport,agetid,schem,source,linktype)
 		VALUES (?, ?, ?, ?,?,?,?,?,?,?,?)
 	`
-	_, err := m.db.Exec(insertSQL, time, attackType, sip, tip, agetid)
+	_, err := m.db.Exec(insertSQL, time, ttype, attackType, sip, tip, tport, sport, agetid, schem, source, linktype)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
